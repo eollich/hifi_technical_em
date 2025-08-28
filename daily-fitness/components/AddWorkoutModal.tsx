@@ -19,20 +19,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { sampleRoutines } from "@/lib/sample";
 import { useWorkoutStore } from "@/lib/workout-store";
+import { useRoutinesStore, toRoutine } from "@/lib/routines-store";
 
 export default function AddWorkoutModal() {
   const router = useRouter();
   const { addWorkout } = useWorkoutStore();
+  const { routines } = useRoutinesStore(); // ← live routines from the store
+
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [routineIdx, setRoutineIdx] = React.useState("0");
 
+  // Keep selection valid if routines list changes (e.g., you added one on Routines tab)
+  React.useEffect(() => {
+    const idx = parseInt(routineIdx, 10);
+    if (!routines.length) {
+      setRoutineIdx("");
+      return;
+    }
+    if (!Number.isFinite(idx) || idx < 0 || idx >= routines.length) {
+      setRoutineIdx("0");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routines.length]);
+
   function onCreate() {
     if (!name.trim()) return;
-    const routine = sampleRoutines[parseInt(routineIdx, 10)];
-    const w = addWorkout(name.trim(), routine);
+    const idx = parseInt(routineIdx, 10);
+    if (!Number.isFinite(idx) || idx < 0 || idx >= routines.length) return;
+
+    const chosen = routines[idx];
+    const w = addWorkout(name.trim(), toRoutine(chosen)); // convert store shape → Routine
     setOpen(false);
     setName("");
     setRoutineIdx("0");
@@ -42,8 +60,9 @@ export default function AddWorkoutModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* Floating + button (raise above footer with z-50) */}
+        {/* Floating + button (above footer) */}
         <Button
+          type="button"
           className="fixed right-5 bottom-24 z-50 h-12 w-12 rounded-full text-xl shadow-lg"
           aria-label="Add Workout"
         >
@@ -51,7 +70,6 @@ export default function AddWorkoutModal() {
         </Button>
       </DialogTrigger>
 
-      {/* shadcn DialogContent already uses z-50, but the class below keeps it explicit */}
       <DialogContent className="z-50">
         <DialogHeader>
           <DialogTitle>New Workout</DialogTitle>
@@ -69,13 +87,13 @@ export default function AddWorkoutModal() {
 
           <div className="grid gap-1">
             <label className="text-sm">Routine</label>
-            <Select value={routineIdx} onValueChange={setRoutineIdx}>
+            <Select value={routineIdx} onValueChange={setRoutineIdx} disabled={!routines.length}>
               <SelectTrigger>
-                <SelectValue placeholder="Select routine" />
+                <SelectValue placeholder={routines.length ? "Select routine" : "No routines available"} />
               </SelectTrigger>
               <SelectContent>
-                {sampleRoutines.map((r, i) => (
-                  <SelectItem key={r.name} value={String(i)}>
+                {routines.map((r, i) => (
+                  <SelectItem key={r.id} value={String(i)}>
                     {r.name} ({r.list.length})
                   </SelectItem>
                 ))}
@@ -85,10 +103,12 @@ export default function AddWorkoutModal() {
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={onCreate}>Continue</Button>
+          <Button type="button" onClick={onCreate} disabled={!name.trim() || !routines.length}>
+            Continue
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

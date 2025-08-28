@@ -6,9 +6,9 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useWorkoutStore } from "@/lib/workout-store";
 
-function toEmbedUrl(url: string): string {
+function toEmbedId(url: string): string | null {
   const m = url.match(/(?:youtu\.be\/|v=)([A-Za-z0-9_-]{11})/);
-  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+  return m ? m[1] : null;
 }
 
 export default function SessionPage() {
@@ -27,8 +27,8 @@ export default function SessionPage() {
   const current = routine.list[idx];
 
   const repCount = current?.reps ?? 3;
-  const [repChecks, setRepChecks] = React.useState<boolean[]>(
-    () => Array(repCount).fill(false)
+  const [repChecks, setRepChecks] = React.useState<boolean[]>(() =>
+    Array(repCount).fill(false)
   );
 
   React.useEffect(() => {
@@ -58,6 +58,7 @@ export default function SessionPage() {
     <div>
       <Header />
       <main className="mx-auto max-w-2xl px-4 py-4">
+        {/* crumbs */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           {routine.list.map((_, i) => (
             <span
@@ -82,13 +83,25 @@ export default function SessionPage() {
         {/* video */}
         <div className="mb-3 rounded-lg border bg-card p-3">
           <div className="text-sm text-muted-foreground">Video</div>
-          <iframe
-            className="mt-2 aspect-video w-full rounded-md"
-            src={toEmbedUrl(current.exercise.video)}
-            title={current.exercise.name}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
+          {(() => {
+            const id = toEmbedId(current.exercise.video);
+            if (!id) {
+              return (
+                <div className="mt-2 text-sm text-destructive">
+                  Invalid video link. Please update this exercise’s video URL.
+                </div>
+              );
+            }
+            return (
+              <iframe
+                className="mt-2 aspect-video w-full rounded-md"
+                src={`https://www.youtube.com/embed/${id}`}
+                title={current.exercise.name}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            );
+          })()}
         </div>
 
         {/* weight */}

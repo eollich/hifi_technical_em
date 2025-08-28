@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import RoutineList from "@/components/RoutineList";
-import { sampleRoutines } from "@/lib/sample";
 
 export default function Page() {
   return (
@@ -8,7 +7,7 @@ export default function Page() {
       <Header />
       <main className="mx-auto max-w-2xl px-4 py-4">
         <h3 className="mb-3 text-lg font-semibold">Routines</h3>
-        <RoutineList routines={sampleRoutines} />
+        <RoutineList />
       </main>
     </div>
   );
