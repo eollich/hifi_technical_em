@@ -1,13 +1,170 @@
+/* =========================
+   Reset & base
+   ========================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f9fafb;
+  color: #111827;
+  line-height: 1.5;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h3, h4, strong { margin: 0 0 0.5rem 0; font-weight: 600; }
+
+/* =========================
+   Header
+   ========================= */
+header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  display: flex; justify-content: space-between; align-items: center;
 }
+
+/* =========================
+   Sections & list cards
+   ========================= */
+section { margin-bottom: 2rem; }
+
+section > div > div {
+  background: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s;
+}
+section > div > div:hover { background: #f3f4f6; cursor: pointer; }
+
+/* =========================
+   Buttons
+   ========================= */
+
+/* Base reset */
+button {
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Primary (blue) */
+button.primary {
+  background: #3b82f6;
+  color: #ffffff;
+}
+button.primary:hover:not([disabled]) { background: #2563eb; }
+
+/* Secondary (neutral) */
+button.secondary {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+button.secondary:hover:not([disabled]) { background: #e5e7eb; }
+
+button[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+/* =========================
+   Footer tabs
+   ========================= */
+footer {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: #fff; border-top: 1px solid #e5e7eb; display: flex;
+}
+footer button {
+  flex: 1; border-radius: 0; font-weight: 600;
+  background: #f8fafc; color: #6b7280; border: 1px solid #e5e7eb;
+}
+footer button:hover { background: #eef2f7; }
+footer button[aria-pressed="true"] { background: #e0f2fe; color: #0369a1; }
+
+/* =========================
+   Modal
+   ========================= */
+div[role="dialog"] {
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+div[role="dialog"] .sheet {
+  background: #fff; padding: 1rem; border-radius: 0.5rem;
+  width: 90%; max-width: 400px;
+}
+
+/* In modal: Cancel = secondary, Continue = primary */
+div[role="dialog"] .sheet > div:last-child button:first-child {
+  composes: secondary;
+}
+div[role="dialog"] .sheet > div:last-child button:last-child {
+  composes: primary;
+}
+
+/* =========================
+   Add Workout floating button
+   ========================= */
+button[style*="position: fixed"] {
+  background: #111827; color: #ffffff; border: 1px solid #111827;
+  border-radius: 9999px;
+  width: 56px; height: 56px;
+  font-size: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.12);
+}
+button[style*="position: fixed"]:hover { background: #0b1220; }
+
+/* =========================
+   Inputs
+   ========================= */
+input[type="text"], select {
+  width: 100%; padding: 0.5rem;
+  border: 1px solid #d1d5db; border-radius: 0.375rem;
+  font-size: 0.95rem; background: #fff;
+}
+input[type="checkbox"] { transform: scale(1.15); }
+
+/* =========================
+   Crumbs
+   ========================= */
+.crumbs span {
+  display: inline-block; min-width: 32px; height: 32px; line-height: 32px;
+  text-align: center; border-radius: 50%;
+  background: #e5e7eb; font-weight: 600;
+}
+.crumbs span.current { background: #34d399; color: #fff; }
+
+/* =========================
+   Info boxes
+   ========================= */
+section > div[style*="dashed"] {
+  background: #fff;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem;
+}
+
+/* =========================
+   Rep checkbox chips
+   ========================= */
+label:has(> input[type="checkbox"]) {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 0.6rem; margin: 0.25rem;
+  border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #fff;
+  flex: 1 1 calc(33.333% - 0.5rem);
+}
+label:has(> input[type="checkbox"]) span { white-space: nowrap; }
+
+div[style*="flex-wrap:wrap"] > label { margin-right: 0; }
+
+@media (max-width: 480px) {
+  label:has(> input[type="checkbox"]) { flex-basis: calc(50% - 0.5rem); }
+}
+
+/* =========================
+   Iframe videos
+   ========================= */
+iframe { border-radius: 0.5rem; margin-top: 0.5rem; width: 100%; }

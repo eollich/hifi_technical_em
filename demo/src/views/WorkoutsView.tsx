@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import type { Routine, Workout } from "../types";
 import AddWorkoutModal from "../components/AddWorkoutModal";
 
@@ -13,9 +13,14 @@ export default function WorkoutsView({
 }): React.ReactElement {
   const [open, setOpen] = useState(false);
 
+
   return (
     <section>
       <h3>Workouts</h3>
+
+      <div style={{display:"flex",gap:8,marginBottom:8}}>
+        <button onClick={()=>setOpen(true)} style={{padding:8,border:"1px solid #333",background:"#fff"}}>+ Add Workout</button>
+      </div>
 
       <div>
         {workouts.map((w,idx)=>(
